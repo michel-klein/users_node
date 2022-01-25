@@ -1,13 +1,23 @@
 import { Response, Request } from "express";
+import { User } from "modules/users/model/User";
 
 import { CreateUserUseCase } from "./CreateUserUseCase";
 
 class CreateUserController {
-  constructor(private createUserUseCase: CreateUserUseCase) {}
+    constructor(private createUserUseCase: CreateUserUseCase) {}
 
-  handle(request: Request, response: Response): Response {
-    // Complete aqui
-  }
+    handle(request: Request, response: Response): Response {
+        const { name, email } = request.body;
+        let createdUser: User;
+
+        try {
+            createdUser = this.createUserUseCase.execute({ name, email });
+        } catch (error) {
+            return response.status(400).json({ "error": error.message });
+        }
+
+        return response.status(201).json(createdUser);
+    }
 }
 
 export { CreateUserController };
